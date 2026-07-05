@@ -72,7 +72,7 @@ def debug():
 
 @app.route("/api/analyze", methods=["POST"])
 def analyze():
-    """核心分析接口"""
+    """核心分析接口（不含 LLM，快速返回）"""
     init_modules()
 
     data = request.get_json() or {}
@@ -113,12 +113,7 @@ def analyze():
     decision = _decide(math_result, iching_result, market_data, news_analysis,
                        spatio, buffett_analysis)
 
-    # 8. LLM 深度分析（如果有 API Key）
-    llm_result = llm_analyzer.analyze(
-        question, math_result, iching_result, market_data,
-        news_analysis, spatio, decision, buffett_analysis
-    )
-
+    # 保存上下文供 LLM 接口使用（简化版：重新生成）
     return jsonify({
         "success": True,
         "question": question,
@@ -131,8 +126,44 @@ def analyze():
         "news": _simplify_news(news_analysis),
         "spatio": spatio,
         "decision": decision,
-        "llm": llm_result,
+        "_ctx": {
+            "math_result": math_result,
+            "iching_result": iching_result,
+            "market_data": market_data,
+            "news_analysis": news_analysis,
+            "spatio": spatio,
+            "decision": decision,
+            "buffett_analysis": buffett_analysis,
+        },
     })
+
+
+@app.route("/api/llm", methods=["POST"])
+def llm_analyze():
+    """LLM 深度分析接口（异步调用）"""
+    init_modules()
+
+    data = request.get_json() or {}
+    question = data.get("question", "").strip()
+    ctx = data.get("_ctx") or {}
+
+    if not question or not ctx:
+        return jsonify({"error": "缺少参数"}), 400
+
+    try:
+        llm_result = llm_analyzer.analyze(
+            question,
+            ctx.get("math_result", {}),
+            ctx.get("iching_result", {}),
+            ctx.get("market_data", {}),
+            ctx.get("news_analysis", {}),
+            ctx.get("spatio", {}),
+            ctx.get("decision", {}),
+            ctx.get("buffett_analysis"),
+        )
+        return jsonify({"success": True, "llm": llm_result})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 def _math_predict(market_data):

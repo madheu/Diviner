@@ -102,12 +102,44 @@ async function analyze() {
     const data = await resp.json();
     renderResult(data);
 
+    // 异步加载 LLM 深度分析（不阻塞主结果）
+    fetchLLMAnalysis(question, data._ctx);
+
   } catch (err) {
     showToast(err.message || "网络错误，请重试");
   } finally {
     btn.disabled = false;
     btnText.textContent = "开始分析";
     btnSpinner.classList.add("hidden");
+  }
+}
+
+// 异步加载 LLM 分析
+async function fetchLLMAnalysis(question, ctx) {
+  const card = document.getElementById("llmCard");
+  card.style.display = "block";
+  document.getElementById("llmBadge").textContent = "AI 思考中";
+  document.getElementById("llmBadge").style.background = "linear-gradient(135deg, #6b7280, #4b5563)";
+  document.getElementById("llmModel").textContent = "正在生成深度分析...";
+  document.getElementById("llmAnalysis").innerHTML = '<div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line" style="width:60%"></div>';
+  document.getElementById("llmRisk").textContent = "";
+  document.getElementById("llmFactors").innerHTML = "";
+  document.getElementById("llmContrarian").textContent = "";
+
+  try {
+    const resp = await fetch("/api/llm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, _ctx: ctx }),
+    });
+
+    if (!resp.ok) throw new Error("LLM 请求失败");
+    const data = await resp.json();
+    renderLLM(data.llm);
+  } catch (err) {
+    document.getElementById("llmBadge").textContent = "AI 不可用";
+    document.getElementById("llmModel").textContent = "深度分析加载失败";
+    document.getElementById("llmAnalysis").textContent = "LLM 服务暂时不可用，请稍后重试。";
   }
 }
 
@@ -290,9 +322,6 @@ function renderResult(data) {
 
   // 反身性
   document.getElementById("reflexivityContent").textContent = d.reflexivity;
-
-  // LLM 深度分析
-  renderLLM(data.llm);
 }
 
 function updateHeroStats(data) {
