@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+feedback_db.json
+tmp/
+*.log
+.env
+.DS_Store

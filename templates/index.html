@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="术数决策">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
+  <title>术数决策系统</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <span class="nav-logo">☯</span>
+      <span class="nav-title">术数决策</span>
+    </div>
+    <div class="nav-badge" id="methodBadge">梅花易数</div>
+  </nav>
+
+  <!-- Hero 区 -->
+  <section class="hero">
+    <h1 class="hero-title">三维决策</h1>
+    <p class="hero-subtitle">融合数学预测、术数易学与宏观逻辑，为你的决策提供量化依据</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number accent" id="statMath">60%</div>
+        <div class="stat-caption">数学权重</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number green" id="statIching">25%</div>
+        <div class="stat-caption">术数权重</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number" id="statMacro" style="color:#a78bfa">15%</div>
+        <div class="stat-caption">宏观权重</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 输入区 -->
+  <section class="input-section">
+    <div class="method-bar">
+      <button class="method-btn active" data-method="meihua">梅花易数</button>
+      <button class="method-btn" data-method="qimen">奇门遁甲</button>
+    </div>
+    <textarea class="question-input" id="questionInput"
+      placeholder="输入你的决策问题&#10;例如：最近大盘走势如何？该加仓还是减仓？"
+      rows="3"></textarea>
+    <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
+      <span id="btnText">开始分析</span>
+      <span id="btnSpinner" class="spinner hidden"></span>
+    </button>
+  </section>
+
+  <!-- 结果区 -->
+  <section class="result-section" id="resultSection" style="display:none">
+
+    <!-- 综合裁决 -->
+    <div class="verdict-card" id="verdictCard">
+      <div class="verdict-header">
+        <div class="verdict-ring" id="verdictRing"></div>
+        <div class="verdict-meta">
+          <div class="verdict-score-text">综合评分</div>
+          <div class="verdict-action" id="verdictAction">--</div>
+          <div class="verdict-detail" id="verdictDetail">--</div>
+        </div>
+      </div>
+      <div class="verdict-tags" id="verdictTags"></div>
+    </div>
+
+    <!-- 折叠面板 -->
+    <div class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header" onclick="toggleAccordion(this)">
+          <span class="acc-icon">📊</span>
+          第一维 · 概率信号
+          <span class="acc-arrow">▾</span>
+        </button>
+        <div class="accordion-body" id="panelMath"></div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" onclick="toggleAccordion(this)">
+          <span class="acc-icon">☯</span>
+          第二维 · 术数信号
+          <span class="acc-arrow">▾</span>
+        </button>
+        <div class="accordion-body" id="panelIching"></div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" onclick="toggleAccordion(this)">
+          <span class="acc-icon">📈</span>
+          第三维 · 市场数据
+          <span class="acc-arrow">▾</span>
+        </button>
+        <div class="accordion-body" id="panelMarket"></div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-header" onclick="toggleAccordion(this)">
+          <span class="acc-icon">💡</span>
+          巴菲特视角
+          <span class="acc-arrow">▾</span>
+        </button>
+        <div class="accordion-body" id="panelBuffett"></div>
+      </div>
+    </div>
+
+    <!-- 反身性提醒 -->
+    <div class="reflexivity-card" id="reflexivityCard">
+      <div class="reflexivity-title">反身性提醒</div>
+      <div id="reflexivityContent">--</div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <p>数据来源 · akshare 实时行情 · 东方财富新闻</p>
+    <p>仅供研究参考，不构成投资建议</p>
+  </footer>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
