@@ -290,6 +290,9 @@ function renderResult(data) {
 
   // 反身性
   document.getElementById("reflexivityContent").textContent = d.reflexivity;
+
+  // LLM 深度分析
+  renderLLM(data.llm);
 }
 
 function updateHeroStats(data) {
@@ -309,6 +312,50 @@ function showToast(msg) {
   toast.textContent = msg;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2500);
+}
+
+// LLM 分析渲染
+function renderLLM(llm) {
+  const card = document.getElementById("llmCard");
+  if (!llm) {
+    card.style.display = "none";
+    return;
+  }
+  card.style.display = "block";
+
+  // 来源标签
+  const badge = document.getElementById("llmBadge");
+  const model = document.getElementById("llmModel");
+  if (llm.source === "llm") {
+    badge.textContent = "AI 深度分析";
+    badge.style.background = "linear-gradient(135deg, #a78bfa, #7c3aed)";
+    model.textContent = llm.model || "";
+  } else {
+    badge.textContent = "规则引擎";
+    badge.style.background = "linear-gradient(135deg, #6b7280, #4b5563)";
+    model.textContent = llm.llm_error ? "LLM 调用失败，已降级" : "未配置 API Key";
+  }
+
+  // 分析文本
+  document.getElementById("llmAnalysis").textContent = llm.analysis || "";
+
+  // 风险等级
+  const riskMap = {"低": "low", "中": "medium", "高": "high", "极高": "critical"};
+  const riskEl = document.getElementById("llmRisk");
+  const riskLevel = llm.risk_level || "中";
+  riskEl.className = "llm-risk " + (riskMap[riskLevel] || "medium");
+  riskEl.innerHTML = `⚠ 风险等级：${riskLevel}`;
+
+  // 关键因素
+  const factors = llm.key_factors || [];
+  document.getElementById("llmFactors").innerHTML = factors
+    .map(f => `<span class="llm-factor">${f}</span>`)
+    .join("");
+
+  // 反向思考
+  document.getElementById("llmContrarian").textContent = llm.contrarian
+    ? "反向思考：" + llm.contrarian
+    : "";
 }
 
 // Service Worker

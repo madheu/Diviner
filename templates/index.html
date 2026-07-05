@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="术数决策">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/static/icon-192.png">
-  <title>术数决策系统</title>
+  <title>Diviner · 术数决策</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -115,6 +115,18 @@
         </button>
         <div class="accordion-body" id="panelBuffett"></div>
       </div>
+    </div>
+
+    <!-- LLM 深度分析 -->
+    <div class="llm-card" id="llmCard" style="display:none">
+      <div class="llm-header">
+        <span class="llm-badge" id="llmBadge">AI</span>
+        <span class="llm-model" id="llmModel"></span>
+      </div>
+      <div class="llm-analysis" id="llmAnalysis"></div>
+      <div class="llm-risk" id="llmRisk"></div>
+      <div class="llm-factors" id="llmFactors"></div>
+      <div class="llm-contrarian" id="llmContrarian"></div>
     </div>
 
     <!-- 反身性提醒 -->

@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from real_data_collector import RealDataCollector
 from news_monitor import NewsMonitor
 from skill_manager import get_skill_manager
+from llm_analyzer import LLMAnalyzer
 
 app = Flask(__name__)
 CORS(app)
@@ -25,14 +26,16 @@ CORS(app)
 real_data = None
 news_monitor = None
 skill_mgr = None
+llm_analyzer = None
 
 
 def init_modules():
-    global real_data, news_monitor, skill_mgr
+    global real_data, news_monitor, skill_mgr, llm_analyzer
     if real_data is None:
         real_data = RealDataCollector()
         news_monitor = NewsMonitor()
         skill_mgr = get_skill_manager()
+        llm_analyzer = LLMAnalyzer()
 
 
 @app.route("/")
@@ -93,6 +96,12 @@ def analyze():
     decision = _decide(math_result, iching_result, market_data, news_analysis,
                        spatio, buffett_analysis)
 
+    # 8. LLM 深度分析（如果有 API Key）
+    llm_result = llm_analyzer.analyze(
+        question, math_result, iching_result, market_data,
+        news_analysis, spatio, decision, buffett_analysis
+    )
+
     return jsonify({
         "success": True,
         "question": question,
@@ -105,6 +114,7 @@ def analyze():
         "news": _simplify_news(news_analysis),
         "spatio": spatio,
         "decision": decision,
+        "llm": llm_result,
     })
 
 

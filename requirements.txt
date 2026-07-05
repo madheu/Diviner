@@ -5,3 +5,5 @@ akshare>=1.14
 requests>=2.31
 beautifulsoup4>=4.12
 lxml>=5.0
+openai>=1.0
+cryptography>=41.0

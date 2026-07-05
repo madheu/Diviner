@@ -6,3 +6,4 @@ tmp/
 *.log
 .env
 .DS_Store
+.llm_config.enc
