@@ -65,7 +65,7 @@ async function analyze() {
   const btnSpinner = document.getElementById("btnSpinner");
 
   btn.disabled = true;
-  btnText.textContent = "分析中...";
+  btnText.textContent = "采集中...";
   btnSpinner.classList.remove("hidden");
 
   // 显示结果区 + 骨架屏
@@ -84,8 +84,16 @@ async function analyze() {
   document.getElementById("reflexivityContent").innerHTML = `
     <div class="skeleton skeleton-line short"></div>
   `;
+  document.getElementById("llmCard").style.display = "none";
 
   resultSection.scrollIntoView({ behavior: "smooth" });
+
+  // 进度提示：30秒内分阶段提示
+  const progressTimers = [
+    setTimeout(() => { if (btn.disabled) btnText.textContent = "运算中..."; }, 8000),
+    setTimeout(() => { if (btn.disabled) btnText.textContent = "深度分析中..."; }, 18000),
+    setTimeout(() => { if (btn.disabled) btnText.textContent = "即将完成..."; }, 30000),
+  ];
 
   try {
     const resp = await fetch("/api/analyze", {
@@ -108,6 +116,7 @@ async function analyze() {
   } catch (err) {
     showToast(err.message || "网络错误，请重试");
   } finally {
+    progressTimers.forEach(t => clearTimeout(t));
     btn.disabled = false;
     btnText.textContent = "开始分析";
     btnSpinner.classList.add("hidden");
