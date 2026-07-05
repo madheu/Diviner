@@ -85,17 +85,26 @@ def analyze():
     # 设置术数方法
     skill_mgr.set_active_method(method)
 
-    try:
-        # 1. 采集真实数据
-        market_data = real_data.collect_all()
-    except Exception as e:
-        market_data = {"index": None, "margin": None, "error": str(e)}
+    # 带超时的数据采集（避免 Railway 访问中国数据源卡死）
+    import concurrent.futures
+    market_data = None
+    news_analysis = None
 
     try:
-        # 2. 新闻分析
-        news_analysis = news_monitor.full_analysis()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as exe:
+            fut_mkt = exe.submit(real_data.collect_all)
+            fut_news = exe.submit(news_monitor.full_analysis)
+            try:
+                market_data = fut_mkt.result(timeout=20)
+            except concurrent.futures.TimeoutError:
+                market_data = {"index": None, "margin": None, "error": "数据采集超时"}
+            try:
+                news_analysis = fut_news.result(timeout=20)
+            except concurrent.futures.TimeoutError:
+                news_analysis = {"news_count": 0, "error": "新闻采集超时"}
     except Exception as e:
-        news_analysis = {"news_count": 0, "error": str(e)}
+        market_data = market_data or {"index": None, "margin": None, "error": str(e)}
+        news_analysis = news_analysis or {"news_count": 0, "error": str(e)}
 
     # 3. 数学预测
     math_result = _math_predict(market_data)
