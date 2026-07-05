@@ -1,4 +1,4 @@
-# QuantOracle
+# Diviner
 
 > Where math meets metaphysics — quantified decisions, ancient wisdom.
 
