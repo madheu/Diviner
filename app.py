@@ -53,6 +53,23 @@ def service_worker():
     return send_from_directory("static", "sw.js")
 
 
+@app.route("/api/debug")
+def debug():
+    """调试接口：查看 LLM 配置状态"""
+    import os
+    from crypto_utils import get_llm_config
+    cfg = get_llm_config()
+    return jsonify({
+        "env_key_set": bool(os.environ.get("LLM_API_KEY")),
+        "env_url_set": bool(os.environ.get("LLM_BASE_URL")),
+        "env_model_set": bool(os.environ.get("LLM_MODEL")),
+        "config_loaded": bool(cfg),
+        "config_provider": cfg.get("base_url", "N/A") if cfg else "N/A",
+        "config_model": cfg.get("model", "N/A") if cfg else "N/A",
+        "has_api_key": bool(cfg.get("api_key")) if cfg else False,
+    })
+
+
 @app.route("/api/analyze", methods=["POST"])
 def analyze():
     """核心分析接口"""
