@@ -13,23 +13,6 @@
 - **时空校准**：农历节气、黄历宜忌、预期差监控
 - **移动端适配**：PWA 支持，手机浏览器打开即用，可添加到桌面
 
-## 快速启动
-
-```bash
-pip install flask flask-cors akshare requests beautifulsoup4 lxml
-python app.py
-```
-
-浏览器访问 `http://localhost:5000`
-
-## 公网分享
-
-```bash
-# 安装 ngrok 并配置 token
-ngrok config add-authtoken 你的token
-./share.sh
-```
-
 ## 项目结构
 
 ```
